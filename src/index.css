@@ -46,6 +46,7 @@ button.blue-cta {
     color: white;
     border: none;
     padding: 5px;
+    margin: 5px;
     cursor: pointer;
     float: right;
 }

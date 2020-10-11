@@ -20,12 +20,12 @@ class App extends React.Component {
 
     menuItemClickHandler = (key) => {
         const orderItems = this.state.orderItems; // copy orderitems
-        orderItems[key] = orderItems[key] ? orderItems[key]+ 1 : 1; // increase/init quantity
+        orderItems[key] = orderItems[key] ? orderItems[key] + 1 : 1; // increase/init quantity
 
         // update state
         this.setState({
             orderItems: orderItems,
-            orderTotal: this.state.orderTotal+this.state.menuItems[key]
+            orderTotal: this.state.orderTotal + this.state.menuItems[key]
         });
 
         return;
@@ -33,17 +33,24 @@ class App extends React.Component {
 
     orderItemClickHandler = (key) => {
         const orderItems = this.state.orderItems; // copy orderitems
-        if(orderItems[key] == 1)
+        if (orderItems[key] === 1)
             delete orderItems[key]; // remove pair
         else
             orderItems[key]--;
 
         this.setState({
             orderItems: orderItems,
-            orderTotal: this.state.orderTotal-this.state.menuItems[key]
+            orderTotal: this.state.orderTotal - this.state.menuItems[key]
         });
 
         return;
+    }
+
+    clearOrderClickHandler = () => {
+        this.setState({
+            orderItems: {},
+            orderTotal: 0.00
+        })
     }
 
     makeFoodItemList(items, buttonText, type, prefix, clickHandler) {
@@ -51,7 +58,7 @@ class App extends React.Component {
             Object.keys(items).map(
                 (key, index) =>
                     <FoodItem
-                        name={key.replace('_',' ')}
+                        name={key.replace('_', ' ')}
                         value={items[key]}
                         key={index}
                         buttonText={buttonText}
@@ -93,6 +100,7 @@ class App extends React.Component {
                         <div className="order-submit">
                             <p>Total: ${this.state.orderTotal}</p>
                             <button className="blue-cta">Check Out</button>
+                            <button className="blue-cta" onClick={()=>this.clearOrderClickHandler()}>Clear</button>
                         </div>
                     </div>
                 </div> {/*end menu*/}
@@ -112,9 +120,9 @@ const menuItems = {
 
 ReactDOM.render(
     <React.StrictMode>
-        <App menuItems={menuItems} 
-        
-        restaurantName={'Joe\'s Pizza'}
+        <App menuItems={menuItems}
+
+            restaurantName={'Joe\'s Pizza'}
         />
     </React.StrictMode>,
     document.getElementById('root')

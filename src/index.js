@@ -22,18 +22,31 @@ class App extends React.Component {
         const orderItems = this.state.orderItems;
         orderItems[key] = this.state.menuItems[key];
         this.setState({
-            orderItems: orderItems
+            orderItems: orderItems,
+            orderTotal: this.state.orderTotal+orderItems[key]
         });
 
         return;
     };
+
+    orderItemClickHandler = (key) => {
+        const orderItems = this.state.orderItems;
+        const price = orderItems[key];
+        delete orderItems[key];
+        this.setState({
+            orderItems: orderItems,
+            orderTotal: this.state.orderTotal-price
+        });
+
+        return;
+    }
 
     makeFoodItemList(items, buttonText, type, clickHandler) {
         return (
             Object.keys(items).map(
                 (key, index) =>
                     <FoodItem
-                        name={key}
+                        name={key.replace('_',' ')}
                         price={items[key]}
                         key={index}
                         buttonText={buttonText}
@@ -45,11 +58,17 @@ class App extends React.Component {
     }
 
     render() {
+
         return (
             <div className="wrapper">
                 <div className="header">
                     <h1>{this.state.restaurantName}</h1>
                 </div>
+                {/*TODO: remove _ from items names,
+                update total,
+                functional remove btn,
+                count for duploacte items in cart
+                 */}
                 <div className="menu">
                     <div className="menu-list">
                         {this.makeFoodItemList(
@@ -65,7 +84,7 @@ class App extends React.Component {
                                 this.state.orderItems,
                                 'Remove',
                                 'order',
-                                this.menuItemClickHandler
+                                this.orderItemClickHandler
                             )}
                         </div>
                         <div className="order-submit">

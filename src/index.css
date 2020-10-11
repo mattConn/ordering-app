@@ -4,7 +4,7 @@
 }
 
 .wrapper {
-    width: 50%;
+    width: 820px;
     margin: 0 auto;
 }
 
@@ -34,6 +34,11 @@
     overflow: auto;
     border-bottom: solid 1px black;
     padding: 10px;
+}
+
+.food-item p{
+    text-transform: capitalize;
+    margin: 0;
 }
 
 button.blue-cta {

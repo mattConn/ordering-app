@@ -11,46 +11,52 @@ class App extends React.Component {
         this.state = {
             employeeView: this.props.employeeView,
             restaurantName: this.props.restaurantName,
-            menuItems: this.props.menuItems,
-            orderItems: this.props.orderItems || {},
+            menuItems: this.props.menuItems,         // name: price
+            orderItems: this.props.orderItems || {}, // name:quantity
             orderTotal: this.props.orderTotal || 0
         };
 
     }
 
     menuItemClickHandler = (key) => {
-        const orderItems = this.state.orderItems;
-        orderItems[key] = this.state.menuItems[key];
+        const orderItems = this.state.orderItems; // copy orderitems
+        orderItems[key] = orderItems[key] ? orderItems[key]+ 1 : 1; // increase/init quantity
+
+        // update state
         this.setState({
             orderItems: orderItems,
-            orderTotal: this.state.orderTotal+orderItems[key]
+            orderTotal: this.state.orderTotal+this.state.menuItems[key]
         });
 
         return;
     };
 
     orderItemClickHandler = (key) => {
-        const orderItems = this.state.orderItems;
-        const price = orderItems[key];
-        delete orderItems[key];
+        const orderItems = this.state.orderItems; // copy orderitems
+        if(orderItems[key] == 1)
+            delete orderItems[key]; // remove pair
+        else
+            orderItems[key]--;
+
         this.setState({
             orderItems: orderItems,
-            orderTotal: this.state.orderTotal-price
+            orderTotal: this.state.orderTotal-this.state.menuItems[key]
         });
 
         return;
     }
 
-    makeFoodItemList(items, buttonText, type, clickHandler) {
+    makeFoodItemList(items, buttonText, type, prefix, clickHandler) {
         return (
             Object.keys(items).map(
                 (key, index) =>
                     <FoodItem
                         name={key.replace('_',' ')}
-                        price={items[key]}
+                        value={items[key]}
                         key={index}
                         buttonText={buttonText}
                         type={type}
+                        prefix={prefix}
                         onClick={() => clickHandler(key)}
                     />
             ) // end map
@@ -64,17 +70,13 @@ class App extends React.Component {
                 <div className="header">
                     <h1>{this.state.restaurantName}</h1>
                 </div>
-                {/*TODO: remove _ from items names,
-                update total,
-                functional remove btn,
-                count for duploacte items in cart
-                 */}
                 <div className="menu">
                     <div className="menu-list">
                         {this.makeFoodItemList(
                             this.state.menuItems,
                             'Add To Order',
                             'menu',
+                            '$',
                             this.menuItemClickHandler
                         )}
                     </div>
@@ -84,6 +86,7 @@ class App extends React.Component {
                                 this.state.orderItems,
                                 'Remove',
                                 'order',
+                                'x',
                                 this.orderItemClickHandler
                             )}
                         </div>
@@ -100,11 +103,11 @@ class App extends React.Component {
 }
 
 const menuItems = {
-    pepperoni_pizza: 12.75,
+    pepperoni_pizza: 12.00,
     cheese_pizza: 11.00,
-    soda: 2.99,
-    garlic_bread: 2.99,
-    fried_calamari: 12.99,
+    soda: 2.00,
+    garlic_bread: 3.00,
+    fried_calamari: 12.00,
 };
 
 ReactDOM.render(

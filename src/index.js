@@ -1,23 +1,47 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import MenuItem from './menuItem';
+import FoodItem from './foodItem';
 import './index.css';
 
 class App extends React.Component {
-    constructor(props){
+
+    constructor(props) {
         super(props);
 
         this.state = {
             employeeView: this.props.employeeView,
             restaurantName: this.props.restaurantName,
             menuItems: this.props.menuItems,
+            orderItems: this.props.orderItems || {},
+            orderTotal: this.props.orderTotal || 0
         };
 
-        this.menuItemComponents = Object.keys(this.state.menuItems).map(
-            key=>
-            <MenuItem name={key} price={this.state.menuItems[key]}/>
-            );
+    }
 
+    menuItemClickHandler = (key) => {
+        const orderItems = this.state.orderItems;
+        orderItems[key] = this.state.menuItems[key];
+        this.setState({
+            orderItems: orderItems
+        });
+
+        return;
+    };
+
+    makeFoodItemList(items, buttonText, type, clickHandler) {
+        return (
+            Object.keys(items).map(
+                (key, index) =>
+                    <FoodItem
+                        name={key}
+                        price={items[key]}
+                        key={index}
+                        buttonText={buttonText}
+                        type={type}
+                        onClick={() => clickHandler(key)}
+                    />
+            ) // end map
+        )
     }
 
     render() {
@@ -26,10 +50,30 @@ class App extends React.Component {
                 <div className="header">
                     <h1>{this.state.restaurantName}</h1>
                 </div>
-                <div className="ordering-menu">
-                    {this.menuItemComponents}
-                </div>
-                <div className="order-list"></div>
+                <div className="menu">
+                    <div className="menu-list">
+                        {this.makeFoodItemList(
+                            this.state.menuItems,
+                            'Add To Order',
+                            'menu',
+                            this.menuItemClickHandler
+                        )}
+                    </div>
+                    <div className="order-ctn">
+                        <div className="order-list">
+                            {this.makeFoodItemList(
+                                this.state.orderItems,
+                                'Remove',
+                                'order',
+                                this.menuItemClickHandler
+                            )}
+                        </div>
+                        <div className="order-submit">
+                            <p>Total: ${this.state.orderTotal}</p>
+                            <button className="blue-cta">Check Out</button>
+                        </div>
+                    </div>
+                </div> {/*end menu*/}
                 {/*end wrapper*/}
             </div>
         );
@@ -46,7 +90,10 @@ const menuItems = {
 
 ReactDOM.render(
     <React.StrictMode>
-        <App menuItems={menuItems}/>
+        <App menuItems={menuItems} 
+        
+        restaurantName={'Joe\'s Pizza'}
+        />
     </React.StrictMode>,
     document.getElementById('root')
 );
